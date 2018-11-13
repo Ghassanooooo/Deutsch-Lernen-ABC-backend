@@ -1,54 +1,41 @@
 const express = require("express");
-//const passport = require("passport");
 const router = express.Router();
-// const keys = require("../../config/keys");
+const User = require("../../models/Users");
 
 router.post("/signup", (req, res) => {
-  res.json({ msg: "the user sign up" });
+  const { username, email, password } = req.body;
+  User.findOne({ email })
+    .then(user => {
+      if (user) {
+        res.json({ msg: "the user allrady exist" });
+      }
+      new User({ username, email, password }).save((err, userdata) => {
+        if (err) {
+          res.json({ error: err });
+        }
+        res.json(userdata);
+      });
+    })
+    .catch(err => console.log(err));
 });
 
 router.post("/login", (req, res) => {
-  // res.setHeader("Set-Cookie", "loggedIn=true;Max-Age=2592000000");
-  // console.log(req.get("Cookie"));
-  //   res.setHeader("Set-Cookie", "loggedIn=true;HttpOnly");
-  //   console.log(
-  //     req
-  //       .get("Cookie")
-  //       .trim()
-  //       .split(";")[0]
-  //       .split("=")[1]
-  //   );
-  req.session.isLoggedIn = true;
-  res.json({ msg: "the user log in" });
-  console.log(req.session);
-  console.log(req.session.isLoggedIn);
+  const { email, password } = req.body;
+  User.findOne({ email })
+    .then(user => {
+      if (!user) {
+        res.json({ msg: "the user not regist yet please sign up" });
+      }
+      req.session.isLoggedIn = true;
+      req.session.user = user;
+      res.json(user);
+      console.log(req.user);
+    })
+    .catch(err => console.log(err));
 });
 
-// router.get(
-//   "/auth/google",
-//   passport.authenticate("google", { scope: ["profile", "email"] }),
-//   (req, res) => {
-//     console.log("ggggggggggggg ", req.user);
-//     res.send(req.user);
-//   }
-// );
-
-// router.get(
-//   "/auth/google/callback",
-//   passport.authenticate("google"),
-//   (req, res) => {
-//     res.redirect(keys.authRedirect);
-//   }
-// );
-
-// router.get("/logout", (req, res) => {
-//   req.logout();
-
-//   res.redirect(keys.authRedirect);
-// });
-// router.get("/current_user", (req, res) => {
-//   console.log("ggggggggggggg ", req.user);
-//   res.json(req.user);
-// });
+router.post("/logout", (req, res) => {
+  req.session.destroy();
+});
 
 module.exports = router;
