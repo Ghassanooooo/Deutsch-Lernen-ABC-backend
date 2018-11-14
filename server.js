@@ -3,9 +3,13 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 const mongoDBStore = require("connect-mongodb-session")(session);
 const user = require("./routes/api/user");
-// const a1 = require("./routes/api/a1");
+const level = require("./routes/api/level");
+const subject = require("./routes/api/subject");
+const subjectContent = require("./routes/api/subjectContent");
+
 const keys = require("./config/keys");
-const User = require("./models/Users");
+const User = require("./models/User");
+
 const app = express();
 const store = new mongoDBStore({
   uri: keys.mongoURI,
@@ -44,7 +48,11 @@ app.use((req, res, next) => {
     .catch(err => console.log(err));
 });
 app.use("/api/user", user);
-// app.use("/api/a1", a1);
+app.use("/api/level", level);
+app.use("/api/subject", subject);
+app.use("/api/subjectContent", subjectContent);
+
+// app.use("/api/a1", a1);Level
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
