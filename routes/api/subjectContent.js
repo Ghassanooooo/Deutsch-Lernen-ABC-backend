@@ -5,9 +5,9 @@ router.get("/:id", (req, res) => {
   SubjectContent.findOne({ subject: req.params.id })
     .then(subjectContent => {
       if (!subjectContent) {
-        res.json({ msg: "the Content items not found" });
+        return res.json({ msg: "the Content items not found" });
       }
-      res.json(subjectContent);
+      return res.json(subjectContent);
     })
     .catch(err => console.log(err));
 });
@@ -22,9 +22,9 @@ router.post("/add/:id", (req, res) => {
     beispielen
   }).save((err, newSubjectContent) => {
     if (err) {
-      res.json({ error: err });
+      return res.json({ error: err });
     }
-    res.json(newSubjectContent);
+    return res.json(newSubjectContent);
   });
 });
 

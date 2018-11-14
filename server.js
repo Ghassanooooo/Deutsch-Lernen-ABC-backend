@@ -36,6 +36,7 @@ app.use(
     cookie: { maxAge: 259200000 }
   })
 );
+
 app.use((req, res, next) => {
   if (!req.session.user) {
     return next();

@@ -4,7 +4,7 @@ const Subject = require("../../models/Subject");
 router.get("/", (req, res) => {
   Subject.find()
     .then(subjects => {
-      res.json(subjects);
+      return res.json(subjects);
     })
     .catch(err => console.log(err));
 });
@@ -19,9 +19,9 @@ router.post("/add/:id", (req, res) => {
     titelarabisch
   }).save((err, newSubject) => {
     if (err) {
-      res.json({ error: err });
+      return res.json({ error: err });
     }
-    res.json(newSubject);
+    return res.json(newSubject);
   });
 });
 
