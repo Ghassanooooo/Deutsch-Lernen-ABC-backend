@@ -5,7 +5,7 @@ router.get("/:id", (req, res) => {
   SubjectContent.findOne({ subject: req.params.id })
     .then(subjectContent => {
       if (!subjectContent) {
-        return res.json({ msg: "the Content items not found" });
+        return res.json({ error: "the Content items not found" });
       }
       return res.json(subjectContent);
     })
