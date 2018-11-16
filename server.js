@@ -29,6 +29,15 @@ mongoose
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(function(req, res, next) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "PUT, GET, POST, DELETE, PATCH"
+  );
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  next();
+});
 app.use(
   session({
     secret: keys.SessionSecret,
