@@ -6,16 +6,18 @@
 const express = require("express");
 const router = express.Router();
 const Level = require("../../models/Level");
-router.get("/", (req, res, next) => {
-  Level.find()
-    .then(posts => {
-      return res.status(200).json(posts);
-    })
-    .catch(e => {
-      const error = new Error(e);
-      error.httpStateCode = 500;
-      return next(error);
-    });
+router.get("/", async (req, res, next) => {
+  try {
+    const level = await Level.find();
+    if (!level) {
+      return res.status(404).json({ error: "the Subjects items not found" });
+    }
+    return res.status(200).json(level);
+  } catch (e) {
+    const error = new Error(e);
+    error.httpStateCode = 500;
+    return next(error);
+  }
 });
 
 router.post("/add", (req, res) => {

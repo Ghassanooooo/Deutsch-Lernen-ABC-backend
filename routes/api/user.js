@@ -5,14 +5,15 @@ const validation = require("../../validation/userValidation");
 const router = express.Router();
 const User = require("../../models/User");
 
-router.post("/signup", validation.signup, (req, res) => {
+router.post("/signup", validation.signup, async (req, res) => {
   const { username, email, password } = req.body;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json({ error: errors.array() });
   }
-  return bcrypt.hash(password, 12).then(hashedPassword => {
-    new User({
+  const hashedPassword = await bcrypt.hash(password, 12);
+  if (hashedPassword) {
+    return new User({
       username,
       email,
       password: hashedPassword
@@ -22,26 +23,27 @@ router.post("/signup", validation.signup, (req, res) => {
       }
       return res.status(201).json(userdata);
     });
-  });
+  }
 });
 
-router.post("/login", validation.login, (req, res, next) => {
+router.post("/login", validation.login, async (req, res, next) => {
   const { email } = req.body;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json({ error: errors.array() });
   }
-  User.findOne({ email })
-    .then(user => {
+  try {
+    const user = await User.findOne({ email });
+    if (user) {
       req.session.isLoggedIn = true;
       req.session.user = user;
       return res.status(200).json({ msg: "weeeeeeeee" });
-    })
-    .catch(e => {
-      const error = new Error(e);
-      error.httpStateCode = 500;
-      return next(error);
-    });
+    }
+  } catch (e) {
+    const error = new Error(e);
+    error.httpStateCode = 500;
+    return next(error);
+  }
 });
 
 router.post("/logout", (req, res) => {

@@ -1,16 +1,18 @@
 const express = require("express");
 const router = express.Router();
 const Subject = require("../../models/Subject");
-router.get("/", (req, res, next) => {
-  Subject.find()
-    .then(subjects => {
-      return res.status(200).json(subjects);
-    })
-    .catch(e => {
-      const error = new Error(e);
-      error.httpStateCode = 500;
-      return next(error);
-    });
+router.get("/", async (req, res, next) => {
+  try {
+    const subjects = await Subject.find();
+    if (!subjects) {
+      return res.status(404).json({ error: "the Subjects items not found" });
+    }
+    return res.status(200).json(subjects);
+  } catch (e) {
+    const error = new Error(e);
+    error.httpStateCode = 500;
+    return next(error);
+  }
 });
 
 router.post("/add/:id", (req, res) => {
