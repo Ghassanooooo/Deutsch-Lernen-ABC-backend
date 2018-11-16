@@ -23,7 +23,9 @@ mongoose
     { useNewUrlParser: true }
   )
   .then(() => console.log("mongodb connected"))
-  .catch(err => console.log(err));
+  .catch(err => {
+    throw new Error(err);
+  });
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -43,17 +45,25 @@ app.use((req, res, next) => {
   }
   User.findById(req.session.user._id)
     .then(user => {
+      if (!user) {
+        return next();
+      }
       req.user = user;
       next();
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+      return next(new Error(err));
+    });
 });
 app.use("/api/user", user);
 app.use("/api/level", level);
 app.use("/api/subject", subject);
 app.use("/api/subjectContent", subjectContent);
 
-// app.use("/api/a1", a1);Level
+// all errors handle middleware
+app.use((error, req, res, next) => {
+  return res.status(error.httpStateCode).json(error);
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

@@ -6,12 +6,16 @@
 const express = require("express");
 const router = express.Router();
 const Level = require("../../models/Level");
-router.get("/", (req, res) => {
+router.get("/", (req, res, next) => {
   Level.find()
     .then(posts => {
       return res.json(posts);
     })
-    .catch(err => console.log(err));
+    .catch(e => {
+      const error = new Error(e);
+      error.httpStateCode = 500;
+      return next(error);
+    });
 });
 
 router.post("/add", (req, res) => {

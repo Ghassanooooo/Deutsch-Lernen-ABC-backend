@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const SubjectContent = require("../../models/SubjectContent");
-router.get("/:id", (req, res) => {
+router.get("/:id", (req, res, next) => {
   SubjectContent.findOne({ subject: req.params.id })
     .then(subjectContent => {
       if (!subjectContent) {
@@ -9,7 +9,11 @@ router.get("/:id", (req, res) => {
       }
       return res.json(subjectContent);
     })
-    .catch(err => console.log(err));
+    .catch(e => {
+      const error = new Error(e);
+      error.httpStateCode = 500;
+      return next(error);
+    });
 });
 
 router.post("/add/:id", (req, res) => {

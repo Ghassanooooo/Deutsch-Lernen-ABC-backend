@@ -25,7 +25,7 @@ router.post("/signup", validation.signup, (req, res) => {
   });
 });
 
-router.post("/login", validation.login, (req, res) => {
+router.post("/login", validation.login, (req, res, next) => {
   const { email } = req.body;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -37,7 +37,11 @@ router.post("/login", validation.login, (req, res) => {
       req.session.user = user;
       return res.json({ msg: "weeeeeeeee" });
     })
-    .catch(e => console.log(e));
+    .catch(e => {
+      const error = new Error(e);
+      error.httpStateCode = 500;
+      return next(error);
+    });
 });
 
 router.post("/logout", (req, res) => {

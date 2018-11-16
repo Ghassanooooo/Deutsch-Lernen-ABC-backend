@@ -1,12 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const Subject = require("../../models/Subject");
-router.get("/", (req, res) => {
+router.get("/", (req, res, next) => {
   Subject.find()
     .then(subjects => {
       return res.json(subjects);
     })
-    .catch(err => console.log(err));
+    .catch(e => {
+      const error = new Error(e);
+      error.httpStateCode = 500;
+      return next(error);
+    });
 });
 
 router.post("/add/:id", (req, res) => {
