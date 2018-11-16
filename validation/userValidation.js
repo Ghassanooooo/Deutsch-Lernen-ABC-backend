@@ -1,6 +1,7 @@
 const { check, body } = require("express-validator/check");
+const bcrypt = require("bcryptjs");
 const User = require("../models/User");
-exports.signin = [
+exports.signup = [
   check("email")
     .isEmail()
     .withMessage("Invalid Email")
@@ -23,5 +24,21 @@ exports.signin = [
       throw new Error("the password is not confirm");
     }
     return true;
+  })
+];
+
+exports.login = [
+  check("email").custom((value, { req }) => {
+    return User.findOne({ email: value }).then(user => {
+      if (!user) {
+        return Promise.reject("the email or password is not valid");
+      }
+      return bcrypt.compare(req.body.password, user.password).then(isMatsh => {
+        if (isMatsh) {
+          return true;
+        }
+        return Promise.reject("the email or password is not valid");
+      });
+    });
   })
 ];

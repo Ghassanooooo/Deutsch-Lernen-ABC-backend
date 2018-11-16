@@ -5,7 +5,7 @@ const validation = require("../../validation/userValidation");
 const router = express.Router();
 const User = require("../../models/User");
 
-router.post("/signup", validation.signin, (req, res) => {
+router.post("/signup", validation.signup, (req, res) => {
   const { username, email, password } = req.body;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -25,24 +25,19 @@ router.post("/signup", validation.signin, (req, res) => {
   });
 });
 
-router.post("/login", (req, res) => {
-  const { email, password } = req.body;
+router.post("/login", validation.login, (req, res) => {
+  const { email } = req.body;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ error: errors.array() });
+  }
   User.findOne({ email })
     .then(user => {
-      if (!user) {
-        return res.json({ error: "the email or password is not valid" });
-      }
-      return bcrypt.compare(password, user.password).then(isMatsh => {
-        if (isMatsh) {
-          req.session.isLoggedIn = true;
-          req.session.user = user;
-          return res.json(user);
-          console.log(req.user);
-        }
-        return res.json({ error: "the email or password is not valid" });
-      });
+      req.session.isLoggedIn = true;
+      req.session.user = user;
+      return res.json({ msg: "weeeeeeeee" });
     })
-    .catch(err => console.log(err));
+    .catch(e => console.log(e));
 });
 
 router.post("/logout", (req, res) => {
