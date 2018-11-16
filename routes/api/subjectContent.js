@@ -5,9 +5,9 @@ router.get("/:id", (req, res, next) => {
   SubjectContent.findOne({ subject: req.params.id })
     .then(subjectContent => {
       if (!subjectContent) {
-        return res.json({ error: "the Content items not found" });
+        return res.status(404).json({ error: "the Content items not found" });
       }
-      return res.json(subjectContent);
+      return res.status(200).json(subjectContent);
     })
     .catch(e => {
       const error = new Error(e);
@@ -26,9 +26,9 @@ router.post("/add/:id", (req, res) => {
     beispielen
   }).save((err, newSubjectContent) => {
     if (err) {
-      return res.json({ error: err });
+      return res.status(500).json({ error: err });
     }
-    return res.json(newSubjectContent);
+    return res.status(201).json(newSubjectContent);
   });
 });
 

@@ -9,7 +9,7 @@ const Level = require("../../models/Level");
 router.get("/", (req, res, next) => {
   Level.find()
     .then(posts => {
-      return res.json(posts);
+      return res.status(200).json(posts);
     })
     .catch(e => {
       const error = new Error(e);
@@ -32,9 +32,9 @@ router.post("/add", (req, res) => {
     beschreibungarabisch
   }).save((err, newLevel) => {
     if (err) {
-      return res.json({ error: err });
+      return res.status(500).json({ error: err });
     }
-    return res.json(newLevel);
+    return res.status(201).json(newLevel);
   });
 });
 

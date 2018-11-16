@@ -18,9 +18,9 @@ router.post("/signup", validation.signup, (req, res) => {
       password: hashedPassword
     }).save((err, userdata) => {
       if (err) {
-        return res.json({ error: err });
+        return res.status(422).json({ error: err });
       }
-      return res.json(userdata);
+      return res.status(201).json(userdata);
     });
   });
 });
@@ -35,7 +35,7 @@ router.post("/login", validation.login, (req, res, next) => {
     .then(user => {
       req.session.isLoggedIn = true;
       req.session.user = user;
-      return res.json({ msg: "weeeeeeeee" });
+      return res.status(200).json({ msg: "weeeeeeeee" });
     })
     .catch(e => {
       const error = new Error(e);
