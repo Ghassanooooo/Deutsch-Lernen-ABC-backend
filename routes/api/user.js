@@ -37,7 +37,7 @@ router.post("/login", validation.login, async (req, res, next) => {
     if (user) {
       req.session.isLoggedIn = true;
       req.session.user = user;
-      return res.status(200).json({ msg: "weeeeeeeee" });
+      return res.status(200).json(user);
     }
   } catch (e) {
     const error = new Error(e);

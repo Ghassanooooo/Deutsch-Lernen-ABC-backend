@@ -2,6 +2,12 @@ const { check, body } = require("express-validator/check");
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 exports.signup = [
+  check("username")
+    .isLength({ min: 2, max: 255 })
+    .withMessage(
+      "User name is reqired min length 2 charctars max length 255 charctars"
+    )
+    .trim(),
   check("email")
     .isEmail()
     .withMessage("Invalid Email")
