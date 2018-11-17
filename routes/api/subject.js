@@ -2,9 +2,12 @@ const express = require("express");
 const router = express.Router();
 const Subject = require("../../models/Subject");
 const loginAuth = require("../../middlewares/login");
-router.get("/", async (req, res, next) => {
+router.get("/:id", async (req, res, next) => {
   try {
-    const subjects = await Subject.find();
+
+    const subjects = await Subject.findOne({
+      level: req.params.id
+    })
     if (!subjects) {
       return res.status(404).json({ error: "the Subjects items not found" });
     }
