@@ -1,9 +1,11 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
+var jwt = require("jsonwebtoken");
 const { validationResult } = require("express-validator/check");
 const validation = require("../../validation/userValidation");
 const router = express.Router();
 const User = require("../../models/User");
+const keys = require("../../config/keys");
 
 router.post("/signup", validation.signup, async (req, res) => {
   const { username, email, password } = req.body;
@@ -35,9 +37,15 @@ router.post("/login", validation.login, async (req, res, next) => {
   try {
     const user = await User.findOne({ email });
     if (user) {
-      req.session.isLoggedIn = true;
-      req.session.user = user;
-      return res.status(200).json(user);
+      const expirationDate = 2592000000;
+      const token = jwt.sign(
+        { email: user.email, id: user._id.toString(), admin: user.admin },
+        keys.jwtToken,
+        { expiresIn: expirationDate }
+      );
+      return res
+        .status(200)
+        .json({ token, userId: user._id.toString(), expirationDate });
     }
   } catch (e) {
     const error = new Error(e);
@@ -47,11 +55,7 @@ router.post("/login", validation.login, async (req, res, next) => {
 });
 
 router.get("/current-user", async (req, res, next) => {
-  return res.status(200).json(req.user);
-});
-
-router.post("/logout", (req, res) => {
-  req.session.destroy();
+  return res.status(200).json({ msg: "Hallo User :)" });
 });
 
 module.exports = router;

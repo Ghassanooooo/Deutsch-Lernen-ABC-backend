@@ -1,7 +1,20 @@
-module.exports = (req, res, next) => {
-  if (!req.session.isLoggedIn) {
-    return res.status(401).send({ error: "You must log in!" });
-  }
+var jwt = require("jsonwebtoken");
+const keys = require("../config/keys");
 
+module.exports = (req, res, next) => {
+  const token = req.get("Authorization");
+  let decodedToken;
+  try {
+    decodedToken = jwt.verify(token, keys.jwtToken);
+  } catch (e) {
+    e.statusCode = 500;
+    throw e;
+  }
+  if (!decodedToken) {
+    const error = new Error("Not Authorization!");
+    error.statusCode = 401;
+    throw error;
+  }
+  req.userId = decodedToken.id;
   next();
 };

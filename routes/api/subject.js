@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Subject = require("../../models/Subject");
+const loginAuth = require("../../middlewares/login");
 router.get("/", async (req, res, next) => {
   try {
     const subjects = await Subject.find();

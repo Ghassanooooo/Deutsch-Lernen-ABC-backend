@@ -1,7 +1,5 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const session = require("express-session");
-const mongoDBStore = require("connect-mongodb-session")(session);
 const user = require("./routes/api/user");
 const level = require("./routes/api/level");
 const subject = require("./routes/api/subject");
@@ -11,11 +9,6 @@ const keys = require("./config/keys");
 const User = require("./models/User");
 
 const app = express();
-const store = new mongoDBStore({
-  uri: keys.mongoURI,
-  collection: "sessions",
-  maxAge: 259200000
-});
 
 mongoose
   .connect(
@@ -38,31 +31,7 @@ app.use(function(req, res, next) {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   next();
 });
-app.use(
-  session({
-    secret: keys.SessionSecret,
-    resave: false,
-    saveUninitialized: false,
-    store: store,
-    cookie: { maxAge: 259200000 }
-  })
-);
 
-app.use(async (req, res, next) => {
-  if (!req.session.user) {
-    return next();
-  }
-  try {
-    const user = await User.findById(req.session.user._id);
-    if (!user) {
-      return next();
-    }
-    req.user = user;
-    next();
-  } catch (err) {
-    return next(new Error(err));
-  }
-});
 app.use("/api/user", user);
 app.use("/api/level", level);
 app.use("/api/subject", subject);
