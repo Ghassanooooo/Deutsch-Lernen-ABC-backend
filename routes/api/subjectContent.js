@@ -18,13 +18,44 @@ router.get("/:id", async (req, res, next) => {
 });
 
 router.post("/add/:id", (req, res) => {
-  const { beschreibung, inhalten, beispielen } = req.body;
+  const {
+    beschreibung,
+    inhaltenDeutsch,
+    inhaltenArabisch,
+    beispielenDeutsch,
+    beispielenArabisch
+  } = req.body;
+
+  const inhaltenErgebnisse = [];
+  const beispielenErgebnisse = [];
+
+  inhaltenDeutsch.split(",").map(inh => {
+    inhaltenErgebnisse.push({ deutsch: inh.trim() });
+  });
+
+  beispielenDeutsch.split(",").map(bei => {
+    beispielenErgebnisse.push({ deutsch: bei.trim() });
+  });
+
+  inhaltenErgebnisse.map(inhaltenErgebniss => {
+    inhaltenArabisch.split(",").map(inh => {
+      inhaltenErgebniss.arabisch = inh.trim();
+    });
+  });
+
+  beispielenErgebnisse.map(beispielenErgebniss => {
+    beispielenArabisch.split(",").map(bei => {
+      beispielenErgebniss.arabisch = bei.trim();
+    });
+  });
+  console.log(inhaltenErgebnisse);
+  console.log(beispielenErgebnisse);
 
   new SubjectContent({
     subject: req.params.id,
     beschreibung,
-    inhalten,
-    beispielen
+    inhalten: inhaltenErgebnisse,
+    beispielen: beispielenErgebnisse
   }).save((err, newSubjectContent) => {
     if (err) {
       return res.status(500).json({ error: err });
