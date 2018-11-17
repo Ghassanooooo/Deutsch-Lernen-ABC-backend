@@ -4,7 +4,6 @@ const { validationResult } = require("express-validator/check");
 const validation = require("../../validation/userValidation");
 const router = express.Router();
 const User = require("../../models/User");
-const authUser = require("../../middlewares/login");
 
 router.post("/signup", validation.signup, async (req, res) => {
   const { username, email, password } = req.body;
@@ -47,17 +46,8 @@ router.post("/login", validation.login, async (req, res, next) => {
   }
 });
 
-router.get("/current-user", authUser, async (req, res, next) => {
-  try {
-    const user = await User.findOne({ email: req.user.email });
-    if (user) {
-      return res.status(200).json(user);
-    }
-  } catch (e) {
-    const error = new Error(e);
-    error.httpStateCode = 500;
-    return next(error);
-  }
+router.get("/current-user", async (req, res, next) => {
+  return res.status(200).json(req.user);
 });
 
 router.post("/logout", (req, res) => {
