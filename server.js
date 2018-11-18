@@ -28,7 +28,10 @@ app.use(function(req, res, next) {
     "Access-Control-Allow-Methods",
     "PUT, GET, POST, DELETE, PATCH, OPTIONS"
   );
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization ,Origin, X-Requested-With, Accept, X-Custom-Header"
+  );
   next();
 });
 

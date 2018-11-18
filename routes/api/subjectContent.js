@@ -60,7 +60,7 @@ router.post("/add/:id", (req, res) => {
     if (err) {
       return res.status(500).json({ error: err });
     }
-    return res.status(201).json(newSubjectContent);
+    return res.status(200).json(newSubjectContent);
   });
 });
 
