@@ -4,11 +4,14 @@ const Subject = require("../../models/Subject");
 const loginAuth = require("../../middlewares/login");
 router.get("/:id", async (req, res, next) => {
   try {
-    const subjects = await Subject.find({ level: req.params.id });
+    const subjects = await Subject.find();
     if (!subjects) {
-      return res.status(404).json({ error: "the Subjects items not found" });
+      return res.status(200).json([]);
     }
-    return res.status(200).json(subjects);
+    const subjectsFilter = subjects.filter(
+      subject => subject.level.toString() === req.params.id
+    );
+    return res.status(200).json(subjectsFilter);
   } catch (e) {
     const error = new Error(e);
     error.httpStateCode = 500;

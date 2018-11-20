@@ -1,4 +1,5 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const router = express.Router();
 const SubjectContent = require("../../models/SubjectContent");
 router.get("/:id", async (req, res, next) => {
@@ -7,7 +8,7 @@ router.get("/:id", async (req, res, next) => {
       subject: req.params.id
     });
     if (!subjectContent) {
-      return res.status(404).json({ error: "the Content items not found" });
+      return res.status(200).json(null);
     }
     return res.status(200).json(subjectContent);
   } catch (e) {

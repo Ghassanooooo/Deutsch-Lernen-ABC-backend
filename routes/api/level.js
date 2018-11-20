@@ -10,7 +10,7 @@ router.get("/", async (req, res, next) => {
   try {
     const level = await Level.find();
     if (!level) {
-      return res.status(404).json({ error: "the Subjects items not found" });
+      return res.status(404).json([]);
     }
     return res.status(200).json(level);
   } catch (e) {

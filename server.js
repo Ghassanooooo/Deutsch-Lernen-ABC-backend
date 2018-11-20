@@ -4,11 +4,14 @@ const user = require("./routes/api/user");
 const level = require("./routes/api/level");
 const subject = require("./routes/api/subject");
 const subjectContent = require("./routes/api/subjectContent");
+cors = require('cors')
+
 
 const keys = require("./config/keys");
 const User = require("./models/User");
 
 const app = express();
+ app.use(cors())
 
 mongoose
   .connect(
@@ -23,7 +26,10 @@ mongoose
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(function(req, res, next) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
+
+
+
+  res.setHeader("Access-Control-Allow-Origin", "*")
   res.setHeader(
     "Access-Control-Allow-Methods",
     "PUT, GET, POST, DELETE, PATCH, OPTIONS"
